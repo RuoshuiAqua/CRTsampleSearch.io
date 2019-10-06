@@ -1,2 +1,2 @@
 # CRTsampleSearch.io
-Examples Runs using CRTsampleSearch
+Examples using CRTsampleSearch
