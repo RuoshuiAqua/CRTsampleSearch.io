@@ -656,7 +656,7 @@ power16</code></pre>
 <h2>Extend followup time</h2>
 <p>When the study population is small, it might be interesting be investigate whether extending the follow-up time will increase the study power, especially when individual units are followed for different among of time due to lost of follow-up. Suppose the intervention in the new study is expected to reduce the rate of hospitalization by -0.2 at most, the potential outcomes with extented follow-up time <span class="math inline">\(\Delta t\)</span> can be simulated as follows:</p>
 <p><span class="math display">\[f_0:  Y_{ij}(0) \sim \big( \lambda_0 * t + Poisson(\lambda_0*\Delta t) \big) / \big( t + \Delta t\big) \]</span></p>
-<p><span class="math inline">\(f_1: Y_{ij}(1) \sim \big( max(\lambda_0-0.2,0) * t + Poisson(max(\lambda_0-0.2,0)*\Delta t) \big) / \big( t + \Delta t\big)\)</span></p>
+<p><span class="math display">\[f_1:  Y_{ij}(1) \sim \big( max(\lambda_0-0.2,0) * t + Poisson(max(\lambda_0-0.2,0)*\Delta t) \big) / \big( t + \Delta t\big)\]</span></p>
 <p>If the previous study data suggests that a patient were not followed till the end of the study, it does not make sense to extend the follow-up time for them. So <span class="math inline">\(\Delta t =0\)</span> for patients who were not followed for a full 211 days in the flu study. Users should specify a lostfollowup argument in <code>CRTsearch</code> as follows:</p>
 <pre class="r"><code>sim_potential_outcomes = function(data, ...){
   Y0 = data[,&quot;Y0&quot;]
