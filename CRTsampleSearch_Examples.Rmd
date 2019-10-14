@@ -1,7 +1,7 @@
 ---
 title: "CRTsampleSearch_Examples"
 author: "Ruoshui Zhai"
-date: "October 6, 2019"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
