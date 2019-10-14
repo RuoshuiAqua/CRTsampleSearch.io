@@ -538,15 +538,17 @@ CRTsearch(nrep=1e4, nt=15, nc=15, dataset=synFluData, outcome=&quot;rate&quot;, 
 <p><span class="math display">\[E(Y_{ij}^{obs}/t_{ij}) = \mu_{ij}; \quad g(\mu_{ij}) = log(\mu_{ij}) = \alpha + W_{i}\beta\]</span> <span class="math display">\[\sum_{i=1}^{n}\Big( \frac{\partial \mu_{i}}{\partial \beta} \Big)^T V_i^{-1}\big(Y_i^{obs} - \mu_i\big)   = 0\]</span> <span class="math display">\[\sum_{i=1}^{n}\Big( \frac{\partial \mu_{i}}{\partial \alpha} \Big)^T V_i^{-1}\big(Y_i^{obs} - \mu_i\big)  = 0 \]</span> <span class="math inline">\(W_{i}\)</span> is the indicator for intervention assignment at the cluster level, <span class="math inline">\(g(\cdot)\)</span> is the log link function, <span class="math inline">\(V_i\)</span> is a the working covariance matrix of <span class="math inline">\(Y^{obs}_{i}\)</span>, <span class="math inline">\(\alpha\)</span> is a constant unknown auxiliary parameter and <span class="math inline">\(\beta\)</span> is the parameter of interest.</p>
 <pre class="r"><code>sim_potential_outcomes = function(data, ...){
   Y0 = data[,&quot;Y0&quot;]
-  Y1 = Y0 - 0.4 ## effect size = -0.4
-  Y1[Y1&lt;0] = 0
+  lambda0 = data[,&quot;rate&quot;]
+  lambda1 = lambda0 - 0.4 ## effect size = -0.4
+  lambda1[lambda1&lt;0] = 0
+  Y1 = unlist(lapply(lambda1*data[,&quot;time_years&quot;], rpois, n=1))
   re = cbind(Y0, Y1)
   colnames(re) = list(&quot;Y0&quot;, &quot;Y1&quot;)
   return(re)
 }
 calc_teststat = function(W, data, ...){
   outcome = data[,&quot;Y1&quot;]*W + data[,&quot;Y0&quot;]*(1-W)
-  preg = gee::gee(outcome ~ W + offset(data$time_years), id=data$cID, family = &quot;poisson&quot;, corstr=&quot;exchangeable&quot;)
+  preg = gee::gee(outcome ~ W + offset(data$time_years), id=data$cID, family = &quot;poisson&quot;, corstr=&quot;exchangeable&quot;, silent=TRUE)
   re = preg$coef[2]
   return(re)
 }

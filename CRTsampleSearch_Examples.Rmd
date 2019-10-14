@@ -391,15 +391,17 @@ $W_{i}$ is the indicator for intervention assignment at the cluster level, $g(\c
 ```{r GEE, eval=FALSE}
 sim_potential_outcomes = function(data, ...){
   Y0 = data[,"Y0"]
-  Y1 = Y0 - 0.4 ## effect size = -0.4
-  Y1[Y1<0] = 0
+  lambda0 = data[,"rate"]
+  lambda1 = lambda0 - 0.4 ## effect size = -0.4
+  lambda1[lambda1<0] = 0
+  Y1 = unlist(lapply(lambda1*data[,"time_years"], rpois, n=1))
   re = cbind(Y0, Y1)
   colnames(re) = list("Y0", "Y1")
   return(re)
 }
 calc_teststat = function(W, data, ...){
   outcome = data[,"Y1"]*W + data[,"Y0"]*(1-W)
-  preg = gee::gee(outcome ~ W + offset(data$time_years), id=data$cID, family = "poisson", corstr="exchangeable")
+  preg = gee::gee(outcome ~ W + offset(data$time_years), id=data$cID, family = "poisson", corstr="exchangeable", silent=TRUE)
   re = preg$coef[2]
   return(re)
 }
